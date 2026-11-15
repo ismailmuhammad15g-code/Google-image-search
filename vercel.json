@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/search.js": { "maxDuration": 60, "memory": 1024 }
+  },
+  "rewrites": [
+    { "source": "/search", "destination": "/api/search" },
+    { "source": "/search.json", "destination": "/api/search" }
+  ]
+}

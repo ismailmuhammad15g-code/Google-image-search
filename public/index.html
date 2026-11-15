@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Images API</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Ccircle cx='14' cy='14' r='6' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M19 19l7 7' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><span class="logo">&#128034; ImageSERP</span><nav><a href="#playground">Playground</a><a href="#docs">API</a></nav></header>
+<main>
+  <h1>Google Images API</h1>
+  <p class="lead">Scrape image results as clean JSON. Same response shape as SerpApi's Google Images API &mdash; self-hosted and unlimited.</p>
+  <p>The API endpoint is <code id="endpoint"></code></p>
+
+  <section id="playground" class="card">
+    <form id="form" autocomplete="off">
+      <label><span class="tag">q</span> Search query
+        <input id="q" name="q" value="Angry" required maxlength="500"></label>
+      <label><span class="tag">location</span> Location
+        <select id="location"></select></label>
+      <details class="more"><summary>More parameters</summary>
+        <div class="grid3">
+          <label>Page (ijn)<input id="ijn" type="number" min="0" max="50" value="0"></label>
+          <label>Safe search<select id="safe"><option value="">moderate (default)</option><option>active</option><option>off</option></select></label>
+          <label>Size<select id="imgsz"><option value="">any</option><option value="l">large</option><option value="m">medium</option><option value="i">icon</option></select></label>
+          <label>Type<select id="image_type"><option value="">any</option><option>photo</option><option>clipart</option><option>lineart</option><option>animated</option><option>face</option></select></label>
+          <label>Color<select id="image_color"><option value="">any</option><option>color</option><option>gray</option></select></label>
+          <label>API key<input id="api_key" placeholder="only if enabled"></label>
+        </div>
+      </details>
+      <button id="go" type="submit">Search</button>
+    </form>
+    <div id="status" role="status"></div>
+    <div class="split">
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="jsonwrap">
+        <div class="jsonbar"><span>JSON output</span><span><button type="button" id="copyUrl">Copy URL</button><button type="button" id="copyCurl">Copy cURL</button><button type="button" id="copyJson">Copy JSON</button></span></div>
+        <pre id="json">Run a search to see the response.</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="docs" class="card">
+    <h2>Parameters</h2>
+    <table>
+      <tr><td><code>q</code></td><td>Search query (required).</td></tr>
+      <tr><td><code>engine</code></td><td><code>google_images</code> (default).</td></tr>
+      <tr><td><code>location</code></td><td>Name from <a href="/api/locations">/api/locations</a>; sets <code>gl</code>/<code>hl</code>.</td></tr>
+      <tr><td><code>gl</code>, <code>hl</code></td><td>Country and language codes.</td></tr>
+      <tr><td><code>ijn</code></td><td>Page number, starting at 0.</td></tr>
+      <tr><td><code>safe</code></td><td><code>moderate</code> (default), <code>active</code>, <code>off</code>.</td></tr>
+      <tr><td><code>imgsz</code>, <code>image_type</code>, <code>image_color</code></td><td>Filters (also via <code>tbs=isz:l,itp:photo,ic:gray</code>).</td></tr>
+      <tr><td><code>api_key</code></td><td>Only needed if <code>API_KEYS</code> is set on the server.</td></tr>
+    </table>
+    <pre id="example"></pre>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
