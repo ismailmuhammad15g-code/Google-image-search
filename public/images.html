@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Search</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322c55e'/%3E%3Ccircle cx='14' cy='14' r='6' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M19 19l7 7' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>Image Search</h1>
+    <p class="lead" style="margin:0 auto">Search and browse pure images. Click any image to view it full size.</p>
+    <form class="searchbar" id="form" autocomplete="off">
+      <input id="q" type="search" placeholder="Search images…" required maxlength="500" aria-label="Search images">
+      <button class="btn" type="submit">Search</button>
+    </form>
+    <div class="filters">
+      <select id="imgsz" aria-label="Size"><option value="">Any size</option><option value="l">Large</option><option value="m">Medium</option><option value="i">Icon</option></select>
+      <select id="image_type" aria-label="Type"><option value="">Any type</option><option>photo</option><option>clipart</option><option>lineart</option><option>animated</option><option>face</option></select>
+      <select id="image_color" aria-label="Color"><option value="">Any color</option><option>color</option><option>gray</option></select>
+      <select id="safe" aria-label="Safe search"><option value="">Safe: moderate</option><option value="active">Safe: strict</option><option value="off">Safe: off</option></select>
+    </div>
+    <div class="chips" id="chips"></div>
+  </section>
+  <div id="status" role="status"></div>
+  <div class="gallery" id="gallery"></div>
+  <div class="center" style="margin-top:18px"><button class="btn ghost" id="more" hidden>Load more</button></div>
+</main>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="x" id="lbx" aria-label="Close">&times;</button>
+  <button class="nav prev" id="lbp" aria-label="Previous">&#8249;</button>
+  <button class="nav next" id="lbn" aria-label="Next">&#8250;</button>
+  <div class="stage"><img id="lbimg" alt=""></div>
+  <div class="meta" id="lbmeta"></div>
+</div>
+<script src="/common.js"></script>
+<script src="/images.js"></script>
+</body>
+</html>

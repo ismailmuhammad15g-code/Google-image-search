@@ -1,9 +1,18 @@
 {
   "functions": {
-    "api/search.js": { "maxDuration": 60, "memory": 1024 }
+    "api/search.js": {
+      "maxDuration": 30
+    }
   },
   "rewrites": [
-    { "source": "/search", "destination": "/api/search" },
-    { "source": "/search.json", "destination": "/api/search" }
-  ]
+    {
+      "source": "/search",
+      "destination": "/api/search"
+    },
+    {
+      "source": "/search.json",
+      "destination": "/api/search"
+    }
+  ],
+  "cleanUrls": true
 }

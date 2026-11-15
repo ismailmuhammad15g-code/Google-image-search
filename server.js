@@ -19,7 +19,8 @@ http
   .createServer(async (req, res) => {
     const path = new URL(req.url, 'http://x').pathname;
     if (routes[path]) return routes[path](req, res);
-    const file = normalize(path === '/' ? '/index.html' : path);
+    const clean = { '/': '/index.html', '/images': '/images.html', '/guide': '/guide.html' };
+    const file = normalize(clean[path] || path);
     if (file.includes('..')) return res.writeHead(400).end();
     try {
       const body = await readFile(join(root, file));
