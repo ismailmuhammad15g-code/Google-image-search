@@ -239,8 +239,9 @@ code, pre { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
 
 /* ---- AI agent ---- */
 .agent-page .sheet { background: linear-gradient(#fff, #fbfdf0); }
-.chat { width: min(860px, 100% - 32px); margin: 0 auto; padding: 34px 0 190px; }
-.welcome { text-align: center; padding: 26px 0 10px; }
+.chat { width: min(1160px, 100% - 32px); margin: 0 auto; padding: 34px 0 190px; }
+.welcome { text-align: center; padding: 26px 0 10px; max-width: 860px; margin: 0 auto; }
+.narrow { max-width: 860px; margin: 0 auto; }
 .welcome .orb { width: 120px; height: 120px; margin: 0 auto 8px; }
 .welcome h1 { font-size: clamp(32px, 5vw, 52px); margin-bottom: 12px; }
 .welcome h1 em { font-style: normal; background: linear-gradient(transparent 62%, var(--lime-d) 62%); padding: 0 4px; }
@@ -337,3 +338,30 @@ details.more { margin: 4px 0 16px; } details.more summary { cursor: pointer; fon
 @keyframes twinkle { 0%, 100% { transform: scale(0.7) rotate(0); opacity: 0.6; } 50% { transform: scale(1.15) rotate(20deg); opacity: 1; } }
 @keyframes scroll { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } .reveal, .tile, .collage > div { opacity: 1 !important; transform: none !important; } }
+
+/* ---- agent results panel ---- */
+.ugrid { columns: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; grid-auto-flow: dense; }
+.ugrid .tile { margin: 0; aspect-ratio: 4 / 3; }
+.ugrid .tile.hero { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+.ugrid .skeltile { margin: 0; aspect-ratio: 4 / 3; height: auto !important; }
+@media (max-width: 700px) { .ugrid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+.gifbadge { position: absolute; left: 9px; bottom: 9px; background: var(--lime-d); color: var(--ink); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; z-index: 2; letter-spacing: 0.05em; }
+.tile:hover .gifbadge { opacity: 0; } .tile .score.hi { background: var(--lime-d); color: var(--ink); }
+.rpanel { margin-top: 30px; background: #fff; border: 1.5px solid var(--ink); border-radius: 22px; box-shadow: 0 5px 0 var(--ink); padding: 24px; animation: pop 0.5s var(--ease) both; }
+.rhead { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.rhead h2 { font-size: 26px; display: flex; align-items: center; gap: 10px; } .rhead h2 small { font-size: 13px; font-weight: 600; background: var(--lime); border-radius: 999px; padding: 3px 11px; letter-spacing: 0; }
+.rhead .rsum { margin: 6px 0 0; color: var(--ink-2); max-width: 560px; font-size: 15px; }
+.rtools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.rtools .tabs button small { opacity: 0.6; margin-left: 3px; font-size: 12px; }
+.rmore { text-align: center; margin-top: 22px; }
+.rempty { text-align: center; padding: 40px 10px; color: var(--ink-2); }
+.understood { margin-top: 16px; padding: 16px 18px; border-radius: 16px; background: var(--lime-l); border: 1px solid #e3f28b; animation: pop 0.5s var(--ease) both; }
+.understood h4 { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; color: var(--green); }
+.understood dl { display: grid; grid-template-columns: 92px 1fr; gap: 8px 12px; margin: 0; font-size: 14.5px; } .understood dt { color: var(--mute); } .understood dd { margin: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.understood dd span.c { background: #fff; border: 1px solid #d9eb86; border-radius: 999px; padding: 2px 11px; font-size: 13px; } .understood dd span.c.q { background: var(--ink); color: #fff; border-color: var(--ink); }
+.gifpill { display: inline-flex; align-items: center; gap: 8px; margin: 0 auto 8px; pointer-events: auto; background: #fff; border: 1.5px solid var(--ink); border-radius: 999px; padding: 5px 14px 5px 6px; font-size: 13px; font-weight: 500; }
+.gifpill i { width: 34px; height: 20px; border-radius: 999px; background: var(--line); position: relative; transition: 0.25s var(--ease); } .gifpill i::after { content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: 0.25s var(--ease); }
+.gifpill.on i { background: var(--ink); } .gifpill.on i::after { left: 16px; background: var(--lime-d); }
+.composer .opts { display: flex; justify-content: center; width: min(860px, 100%); margin: 0 auto; }
+.ugrid .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ugrid .tile.hero { min-height: 0; }
