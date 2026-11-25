@@ -15,10 +15,17 @@
   <section class="phero"><div class="wrap">
     <div class="eyebrow">Developers</div>
     <h1>Developer Guide</h1>
-    <p>Everything another developer needs to use this image search API &mdash; free, unlimited, no API key. Press <b>Copy page</b> and paste it into your docs or AI assistant.</p>
-    <button class="btn dark" id="copyPage" type="button">Copy page</button>
+    <p>Everything you need to use the image search <b>and the AI agent</b> from your own app, bot or website. Free, unlimited, no key. Copy any section, or the whole page, into your docs or AI assistant.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn dark" id="copyPage" type="button">Copy whole guide</button>
+      <button class="btn ghost" id="copyOpenapi" type="button">Copy OpenAPI spec</button>
+      <a class="btn ghost" href="/playground">Try it live</a>
+    </div>
   </div></section>
-  <div class="guide"><article id="doc"></article></div>
+  <div class="guidewrap wrap">
+    <aside class="toc" id="toc" aria-label="Contents"></aside>
+    <article id="doc" class="guide"></article>
+  </div>
 </main>
 </div>
 <script src="/vendor/lottie.min.js"></script>

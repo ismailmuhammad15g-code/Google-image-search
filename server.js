@@ -3,17 +3,20 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { searchHandler, healthHandler, locationsHandler } from './lib/handler.js';
+import { searchHandler, healthHandler, locationsHandler, agentHandler, openapiHandler } from './lib/handler.js';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), 'public');
 const routes = {
   '/api/search': searchHandler,
   '/search': searchHandler,
   '/search.json': searchHandler,
+  '/api/agent': agentHandler,
+  '/api/openapi': openapiHandler,
+  '/openapi.json': openapiHandler,
   '/api/health': healthHandler,
   '/api/locations': locationsHandler,
 };
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.json': 'application/json', '.ico': 'image/x-icon' };
+const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.json': 'application/json', '.md': 'text/markdown; charset=utf-8', '.ico': 'image/x-icon' };
 
 http
   .createServer(async (req, res) => {

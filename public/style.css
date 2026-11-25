@@ -38,7 +38,7 @@ p { margin: 0 0 1em; }
 code, pre { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
 
 /* ---- sheet (white page card on the lime frame) ---- */
-.sheet { position: relative; max-width: 1280px; margin: 14px auto; background: var(--white); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(28, 74, 63, 0.45); min-height: calc(100vh - 28px); display: flex; flex-direction: column; }
+.sheet { position: relative; max-width: 1280px; margin: 14px auto; background: var(--white); border-radius: 22px; overflow: clip; box-shadow: 0 30px 80px -30px rgba(28, 74, 63, 0.45); min-height: calc(100vh - 28px); display: flex; flex-direction: column; }
 .sheet > main { flex: 1; }
 @media (max-width: 900px) { body { background: var(--white); } .sheet { margin: 0; border-radius: 0; box-shadow: none; min-height: 100vh; } }
 .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
@@ -365,3 +365,16 @@ details.more { margin: 4px 0 16px; } details.more summary { cursor: pointer; fon
 .composer .opts { display: flex; justify-content: center; width: min(860px, 100%); margin: 0 auto; }
 .ugrid .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ugrid .tile.hero { min-height: 0; }
+
+/* ---- guide v2 ---- */
+.guidewrap { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 36px; padding: 30px 0 70px; align-items: start; }
+.guidewrap .guide { width: auto; margin: 0; padding: 0; }
+.toc { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 2px; max-height: calc(100vh - 120px); overflow: auto; }
+.toc a { text-decoration: none; color: var(--ink-2); font-size: 14px; padding: 7px 12px; border-radius: 10px; border-left: 3px solid transparent; transition: 0.2s; }
+.toc a:hover { background: var(--soft); color: var(--ink); } .toc a.on { background: var(--lime); color: var(--ink); font-weight: 600; border-left-color: var(--ink); }
+.gsec { scroll-margin-top: 90px; padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.gh { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; margin: 34px 0 12px; } .gh h2 { margin: 0; font-size: 26px; }
+.guide h3 { font-size: 19px; margin: 26px 0 8px; }
+.tablewrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 12px; } .tablewrap table { display: table; margin: 0; min-width: 480px; } .tablewrap tr:last-child td { border-bottom: 0; }
+.codeblock .lang { position: absolute; top: 12px; left: 16px; font-size: 11px; color: #8a8fb8; text-transform: uppercase; letter-spacing: 0.1em; } .codeblock pre { padding-top: 34px; }
+@media (max-width: 900px) { .guidewrap { grid-template-columns: minmax(0, 1fr); gap: 0; } .toc { position: static; flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 8px; scrollbar-width: none; } .toc a { white-space: nowrap; border-left: 0; flex: none; } }
