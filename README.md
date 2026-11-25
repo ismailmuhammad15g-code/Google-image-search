@@ -10,7 +10,14 @@ original_width, is_product`).
 `/` home · `/images` image search (infinite scroll, filters, favorites, lightbox) · `/agent` AI image agent ·
 `/playground` API playground · `/guide` developer guide.
 
-### AI agent
+### Agent API
+`GET|POST /api/agent?q=<description>` runs the whole agent server-side and returns JSON (`understanding`,
+`summary`, ranked `images_results` with `score`/`why`/`is_gif`). Options: `limit`, `min_score`, `gif`, `format`,
+`previous` (refine), `plan_only`, `thinking`, `stream=true` (Server-Sent Events). OpenAPI spec: `/openapi.json`.
+Full docs, code samples and an LLM tool definition: `/guide` (source: `public/guide.md`). The server reads
+`GROQ_API_KEY`/`GROQ_BASE_URL`/`GROQ_MODEL` env vars, else `public/config.js`; with no key it falls back to keyword mode.
+
+### AI agent (browser)
 `/agent` calls Groq (`openai/gpt-oss-120b`) **from the browser**; the key lives in `public/config.js`
 (test setup, intentionally public). The agent streams its thinking, writes 3-5 search queries, searches in
 parallel, then ranks candidates by metadata with match scores. If the AI is unreachable it falls back to a plain
