@@ -97,14 +97,17 @@
   lb.addEventListener('touchend', (e) => { const d = e.changedTouches[0].clientX - sx; if (Math.abs(d) > 60) show(cur + (d < 0 ? 1 : -1)); }, { passive: true });
 
   /** Build a gallery inside `el`. */
-  window.createGallery = function (el, { onSimilar: sim } = {}) {
-    const g = { items: [], el };
+  window.openLightbox = open;
+  window.createGallery = function (el, { onSimilar: sim, uniform = false } = {}) {
+    const g = { items: [], el, hero: false };
+    if (uniform) el.classList.add('ugrid');
+    const isGif = (i) => /\.gif(\?|#|$)/i.test(i.original || '');
     const tile = (i, n, delay) => {
-      const ratio = i.original_width && i.original_height ? Math.min(2.2, Math.max(0.5, i.original_width / i.original_height)) : 0;
+      const ratio = !uniform && i.original_width && i.original_height ? Math.min(2.2, Math.max(0.5, i.original_width / i.original_height)) : 0;
       const fav = Favs.has(i.original);
-      return `<figure class="tile${ratio ? ' fixed' : ''}" data-n="${n}" tabindex="0" style="animation-delay:${delay}ms${ratio ? `;aspect-ratio:${ratio.toFixed(3)}` : ''}">
+      return `<figure class="tile${ratio ? ' fixed' : ''}${uniform ? ' fixed' : ''}${g.hero && n === 0 ? ' hero' : ''}${isGif(i) ? ' gif' : ''}" data-n="${n}" tabindex="0" style="animation-delay:${delay}ms${ratio ? `;aspect-ratio:${ratio.toFixed(3)}` : ''}">
         <img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="${esc(i.thumbnail)}" alt="${esc(i.title || i.source)}">
-        ${i.score != null ? `<span class="score">${i.score}%</span>` : ''}
+        ${i.score != null ? `<span class="score${i.score >= 85 ? ' hi' : ''}">${g.hero && n === 0 ? '★ Best match · ' : ''}${i.score}%</span>` : ''}${isGif(i) ? '<span class="gifbadge">GIF</span>' : ''}
         <div class="acts"><button class="ibtn fav${fav ? ' on' : ''}" data-a="fav" aria-label="Save">${I.heart}</button><button class="ibtn" data-a="open" aria-label="Open source page">${I.ext}</button></div>
         <figcaption class="ov"><span class="t">${esc(i.title || i.source)}</span><span class="s">${esc(i.source)}${i.original_width ? ` · ${i.original_width}×${i.original_height}` : ''}</span>${i.why ? `<span class="why">${esc(i.why)}</span>` : ''}</figcaption></figure>`;
     };
@@ -140,6 +143,15 @@
         document.dispatchEvent(new CustomEvent('favs-changed'));
       } else if (a?.dataset.a === 'open') window.open(i.link || i.original, '_blank', 'noopener');
       else openAt(t);
+    });
+    el.addEventListener('mouseover', (e) => {
+      const t = e.target.closest?.('.tile.gif');
+      if (!t || t.dataset.played) return;
+      t.dataset.played = '1';
+      const img = t.querySelector('img'), i = g.items[+t.dataset.n], thumb = img.src;
+      const probe = new Image();
+      probe.onload = () => { img.src = i.original; };
+      probe.src = i.original; // if the original fails we simply keep the preview
     });
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList?.contains('tile')) openAt(e.target); });
     return g;
