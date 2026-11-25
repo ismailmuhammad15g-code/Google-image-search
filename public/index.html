@@ -3,57 +3,93 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Google Images API</title>
-<meta name="description" content="Free, unlimited Google Images style search API returning clean JSON.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322c55e'/%3E%3Ccircle cx='14' cy='14' r='6' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M19 19l7 7' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>Lemon Lens · Free image search with an AI agent</title>
+<meta name="description" content="Free, unlimited image search. Describe any picture and let the AI agent find the most accurate matches.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+<div class="sheet">
 <main>
-  <h1>Google Images API</h1>
-  <div class="badges">
-    <span class="badge"><span>Free</span><span>Unlimited</span></span>
-    <span class="badge"><span>API status</span><span id="up">checking…</span></span>
-  </div>
-  <p class="lead">Our Google Images API allows you to scrape results from the images search page as clean JSON. No key, no signup, no limits.</p>
-  <p>The API endpoint is</p>
-  <code class="endpoint" id="endpoint"></code>
-  <p>Head to the playground below for a live and interactive demo.</p>
-
-  <div class="info">
-    <h4><i>i</i>Want to just see the pictures?</h4>
-    <p>Open the <a href="/images">Image Search page</a> for a clean gallery, or read the <a href="/guide">Developer Guide</a> to use the API from your own app.</p>
-  </div>
-
-  <section id="playground" class="card">
-    <form id="form" autocomplete="off">
-      <label><span class="tag">q</span>Search query
-        <input id="q" name="q" value="Angry" required maxlength="500"></label>
-      <label><span class="tag">location</span>Location
-        <select id="location"></select></label>
-      <details class="more"><summary>More parameters</summary>
-        <div class="grid3">
-          <label>Page (ijn)<input id="ijn" type="number" min="0" max="50" value="0"></label>
-          <label>Safe search<select id="safe"><option value="">moderate (default)</option><option>active</option><option>off</option></select></label>
-          <label>Size<select id="imgsz"><option value="">any</option><option value="l">large</option><option value="m">medium</option><option value="i">icon</option></select></label>
-          <label>Type<select id="image_type"><option value="">any</option><option>photo</option><option>clipart</option><option>lineart</option><option>animated</option><option>face</option></select></label>
-          <label>Color<select id="image_color"><option value="">any</option><option>color</option><option>gray</option></select></label>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">Meet Lemon Lens</div>
+        <h1>Find the exact <em>image</em> you picture.</h1>
+        <p class="lead">Free, unlimited image search from multiple engines, plus an AI agent that reads your description, thinks it through and picks the most accurate pictures.</p>
+        <form class="pill" id="hform" autocomplete="off">
+          <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          <input id="hq" type="search" placeholder="Try “sunset over a quiet lake”" maxlength="500" aria-label="Search images" enterkeyhint="search">
+          <button class="btn" type="submit">Search</button>
+        </form>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:18px">
+          <a class="btn dark" id="agentBtn" href="/agent"><span aria-hidden="true">✦</span> Ask the AI agent</a>
+          <a class="link-arrow" href="/images">Browse image search <b>&nearr;</b></a>
         </div>
-      </details>
-      <div class="center"><button id="go" class="btn" type="submit">Search <span aria-hidden="true">&#128269;</span></button></div>
-    </form>
-    <div id="status" role="status"></div>
-    <div class="split">
-      <div id="grid" class="masonry" aria-live="polite"></div>
-      <div class="jsonwrap">
-        <div class="jsonbar"><span>images_results</span><span><button type="button" id="copyUrl">Copy URL</button><button type="button" id="copyCurl">Copy cURL</button><button type="button" id="copyJson">Copy JSON</button></span></div>
-        <pre id="json">Run a search to see the response.</pre>
+        <div class="chips" id="hchips"></div>
+        <div class="rating"><span class="star">★</span> 100% free · no signup · no limits</div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="block"></div>
+        <div class="deco d-swish" id="swish"></div>
+        <div class="collage" id="collage"><div><div class="sk"></div></div><div><div class="sk"></div></div><div><div class="sk"></div></div></div>
+        <div class="deco d-ring" id="ring"></div>
+        <div class="deco d-tri" id="tri"></div>
+        <div class="deco d-spark" style="left:46%;top:2%" id="sp1"></div>
+        <div class="deco d-spark" style="right:2%;bottom:3%;animation-delay:1.2s" id="sp2"></div>
+        <div class="float-card">
+          <h4>What are you looking for?</h4>
+          <div class="row"><span class="lot" id="hlot"></span><div class="lines"><i></i><i></i><i></i></div></div>
+          <div class="typing" id="typing" style="margin-top:10px;color:var(--ink-2);min-height:20px"></div>
+        </div>
       </div>
     </div>
   </section>
+
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat"><b>Free</b><span>No signup, no API key</span></div>
+      <div class="stat"><b>∞</b><span>Unlimited searches</span></div>
+      <div class="stat"><b>2+</b><span>Engines merged &amp; de-duplicated</span></div>
+      <div class="stat"><b>AI</b><span>Agent ranks by accuracy</span></div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head reveal"><div class="eyebrow">Features</div><h2>Everything you need to find the right picture</h2><p>Built for speed and accuracy, with a clean experience on every screen.</p></div>
+      <div class="grid3" id="features"></div>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="wrap">
+      <div class="sec-head reveal"><div class="eyebrow">AI Agent</div><h2>Say what you see. The agent does the rest.</h2><p>Three steps that turn a vague idea into the right image.</p></div>
+      <div class="steps">
+        <div class="step reveal"><h3>Describe it</h3><p>Type a sentence or a single word in any language, like “a red fishing boat at sunrise”.</p></div>
+        <div class="step reveal" style="--d:.12s"><h3>The agent thinks</h3><p>It works out the details, writes several sharper searches and runs them across engines in parallel.</p></div>
+        <div class="step reveal" style="--d:.24s"><h3>Best matches first</h3><p>Every candidate is checked against your description and ranked with a match score.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="marqueeSec" hidden>
+    <div class="marquee reveal"><div class="track" id="track"></div></div>
+  </section>
+
+  <section class="section" style="padding-top:20px">
+    <div class="wrap"><div class="band reveal">
+      <h2>Ready to find your image?</h2>
+      <p>Start with a quick search or let the AI agent work it out for you. It's free, always.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn" href="/agent">✦ Try the AI agent</a><a class="btn ghost" href="/images">Open image search</a></div>
+    </div></div>
+  </section>
 </main>
-<footer>Free &amp; unlimited image search API &middot; <a href="/guide">Developer guide</a></footer>
+</div>
+<script src="/vendor/lottie.min.js"></script>
 <script src="/common.js"></script>
-<script src="/app.js"></script>
+<script src="/home.js"></script>
 </body>
 </html>

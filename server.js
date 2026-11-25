@@ -13,13 +13,13 @@ const routes = {
   '/api/health': healthHandler,
   '/api/locations': locationsHandler,
 };
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
+const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.json': 'application/json', '.ico': 'image/x-icon' };
 
 http
   .createServer(async (req, res) => {
     const path = new URL(req.url, 'http://x').pathname;
     if (routes[path]) return routes[path](req, res);
-    const clean = { '/': '/index.html', '/images': '/images.html', '/guide': '/guide.html' };
+    const clean = { '/': '/index.html', '/images': '/images.html', '/guide': '/guide.html', '/agent': '/agent.html', '/playground': '/playground.html' };
     const file = normalize(clean[path] || path);
     if (file.includes('..')) return res.writeHead(400).end();
     try {

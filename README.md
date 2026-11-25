@@ -4,7 +4,18 @@
 [SerpApi's Google Images API](https://serpapi.com/google-images-api): `search_metadata`,
 `search_parameters`, `search_information`, `images_results[]` (`position, thumbnail,
 related_content_id, source, source_logo, title, link, original, original_height,
-original_width, is_product`). A playground UI lives at `/`.
+original_width, is_product`). 
+
+## Site pages
+`/` home · `/images` image search (infinite scroll, filters, favorites, lightbox) · `/agent` AI image agent ·
+`/playground` API playground · `/guide` developer guide.
+
+### AI agent
+`/agent` calls Groq (`openai/gpt-oss-120b`) **from the browser**; the key lives in `public/config.js`
+(test setup, intentionally public). The agent streams its thinking, writes 3-5 search queries, searches in
+parallel, then ranks candidates by metadata with match scores. If the AI is unreachable it falls back to a plain
+keyword search. Rotate the key and move it server-side before any real launch.
+The loading animation is `public/assets/ai-loading.json` (Lottie, `public/vendor/lottie.min.js`).
 
 ## Deploy on Vercel (free plan)
 1. Import the repo in Vercel (or run `npx vercel`). No build step, no env vars required.
@@ -32,7 +43,8 @@ npm test
 | `DEFAULT_BACKEND` | `auto` (default), `bing`, `google`. Per request: `&backend=bing`. |
 
 ## Engines and honest limitations
-- **Bing (default)**: plain HTTP, ~0.3-1s, works on Vercel free with no setup. The response's
+- **Default (`auto`)**: Bing + DuckDuckGo queried in parallel, merged, de-duplicated and relevance-ranked (`&backend=bing|ddg|google` to force one). The DuckDuckGo engine is unit-tested on fixtures but not verified live from this sandbox.
+- **Bing**: plain HTTP, ~0.3-1s, works on Vercel free with no setup. The response's
   `search_metadata.backend` says which engine answered.
 - **Google**: Google requires JavaScript (plain HTTP returns an "enable JS" page) and sends
   datacenter IPs (including Vercel's and this dev sandbox) to a CAPTCHA. The Google engine

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Image Agent · Lemon Lens</title>
+<meta name="description" content="Describe the image you want in your own words. The AI agent thinks, searches the web and picks the most accurate matches.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="agent-page">
+<div class="sheet">
+<main>
+  <div class="chat" id="chat">
+    <section class="welcome" id="welcome">
+      <div class="orb" id="orb"></div>
+      <div class="eyebrow">AI image agent</div>
+      <h1>Describe it. <em>We'll find it.</em></h1>
+      <p>Write a sentence or just a word, in any language. The agent thinks it through, writes smarter searches, scans the web and ranks the images that match best.</p>
+      <div class="examples" id="examples"></div>
+    </section>
+    <div id="thread"></div>
+  </div>
+</main>
+</div>
+<div class="composer">
+  <form id="form" autocomplete="off">
+    <textarea id="input" rows="1" maxlength="600" placeholder="Describe the image you're looking for…" aria-label="Describe the image"></textarea>
+    <button class="send" id="send" type="submit" aria-label="Send" disabled></button>
+  </form>
+  <div class="hint">Powered by an AI agent · results can be refined with follow-up messages</div>
+</div>
+<script src="/vendor/lottie.min.js"></script>
+<script src="/config.js"></script>
+<script src="/common.js"></script>
+<script src="/gallery.js"></script>
+<script src="/agent.js"></script>
+</body>
+</html>
