@@ -92,7 +92,11 @@ Errors return an HTTP status and JSON like \`{ "error": "Missing query \`q\` par
 | 400 | Bad or missing parameter. |
 | 502 / 503 | The upstream search engine failed or rate limited. Wait a moment and retry. |
 
-## 8. Tips
+## 8. Engines
+
+By default the API queries Bing and DuckDuckGo in parallel, merges, de-duplicates and ranks the results. Force one with \`&backend=bing\` or \`&backend=ddg\`. \`search_metadata.backend\` tells you which answered.
+
+## 9. Tips
 
 - Results are cached for 5 minutes, so repeating a search is instant.
 - Use \`encodeURIComponent\` / \`params=\` so special characters in \`q\` are escaped.

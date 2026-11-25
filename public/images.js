@@ -1,93 +1,94 @@
-let items = [], seen = new Set(), page = 0, query = '', loading = false, cur = -1;
-const SUGG = ['Sunset', 'Cats', 'Mountains', 'Cars', 'Food', 'Anime', 'Space', 'Architecture'];
-$('chips').innerHTML = SUGG.map((s) => `<button type="button" class="chip">${s}</button>`).join('');
-$('chips').addEventListener('click', (e) => { if (e.target.classList.contains('chip')) { $('q').value = e.target.textContent; start(); } });
+const SUGG = ['Sunset beach', 'Cute cats', 'Mountains', 'Sports cars', 'Street food', 'Anime wallpaper', 'Galaxy', 'Modern architecture'];
+const norm = (u) => { try { const x = new URL(u); return (x.hostname.replace(/^www\./, '') + x.pathname).toLowerCase(); } catch { return String(u); } };
+
+let seen = new Set(), page = 0, query = '', loading = false, done = false, ctl = null, tab = 'search';
+const gal = createGallery($('gallery'), { onSimilar: (i) => { $('q').value = (i.title || i.source).split(/\s+/).slice(0, 8).join(' '); setTab('search'); start(); scrollTo({ top: 0, behavior: 'smooth' }); } });
 
 const params = () => ({ q: query, ijn: page || '', imgsz: $('imgsz').value, image_type: $('image_type').value, image_color: $('image_color').value, safe: $('safe').value });
+const setStatus = (t, err) => { $('status').className = err ? 'err' : ''; $('status').textContent = t; };
 
-function card(i, n) {
-  return `<a href="${esc(i.original)}" data-n="${n}" target="_blank" rel="noopener" aria-label="${esc(i.title)}">
-    <img loading="lazy" referrerpolicy="no-referrer" src="${esc(i.thumbnail)}" alt="${esc(i.title)}"
-      onerror="this.closest('a').remove()"><span class="cap">${esc(i.title || i.source)}</span></a>`;
+function renderHistory() {
+  const h = History.list();
+  $('hist').innerHTML = (h.length ? h : SUGG).map((s) => `<button type="button" class="chip">${esc(s)}</button>`).join('');
 }
+$('hist').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) { $('q').value = c.textContent; setTab('search'); start(); } });
+$('related').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) { $('q').value = c.dataset.q; start(); scrollTo({ top: 0, behavior: 'smooth' }); } });
 
 async function load(reset) {
-  if (loading) return;
+  if (loading || done) return;
   loading = true;
+  ctl?.abort();
+  ctl = new AbortController();
+  const my = ctl;
   $('more').hidden = true;
-  $('status').className = '';
-  if (reset) {
-    $('gallery').innerHTML = Array.from({ length: 12 }, (_, i) => `<div class="skel" style="height:${130 + ((i * 53) % 130)}px"></div>`).join('');
-    $('status').textContent = '';
-  } else $('status').textContent = 'Loading more…';
+  if (reset) { gal.skeleton(12); setStatus('Searching…'); } else setStatus('Loading more…');
   try {
-    const { data } = await searchApi(params());
-    const fresh = (data.images_results || []).filter((i) => i.original && !seen.has(i.original));
-    fresh.forEach((i) => seen.add(i.original));
-    const base = items.length;
-    items = items.concat(fresh);
-    if (reset) $('gallery').innerHTML = '';
-    $('gallery').insertAdjacentHTML('beforeend', fresh.map((i, k) => card(i, base + k)).join(''));
-    if (!items.length) {
-      $('gallery').innerHTML = `<div class="empty">No images found for “${esc(query)}”. Try another search.</div>`;
-      $('status').textContent = '';
+    const { data } = await searchApi(params(), my.signal);
+    const fresh = (data.images_results || []).filter((i) => i.original && !seen.has(norm(i.original)));
+    fresh.forEach((i) => seen.add(norm(i.original)));
+    if (reset) gal.clear();
+    gal.append(fresh);
+    const rel = data.suggested_searches || [];
+    if (reset) $('related').innerHTML = rel.map((s) => `<button type="button" class="chip" data-q="${esc(query + ' ' + s.name)}">${esc(s.name)}</button>`).join('');
+    if (!gal.items.length) {
+      $('gallery').innerHTML = `<div class="empty"><b>No images found</b>for “${esc(query)}”. Try different words or ask the <a href="/agent">AI agent</a>.</div>`;
+      setStatus('');
+      done = true;
+    } else if (!fresh.length) {
+      done = true;
+      setStatus(`${gal.items.length} images · that's everything for now`);
     } else {
-      $('status').textContent = `${items.length} images`;
-      if (fresh.length) $('more').hidden = false;
-      else $('status').textContent = `${items.length} images · no more new results`;
+      setStatus(`${gal.items.length} images${data.search_metadata?.backend ? ' · ' + data.search_metadata.backend.replace(/\+/g, ' + ') : ''}`);
+      $('more').hidden = false;
     }
   } catch (err) {
-    if (reset) $('gallery').innerHTML = '';
-    $('status').className = 'err';
-    $('status').textContent = err.message;
+    if (err.name === 'AbortError') return;
+    if (reset) gal.clear();
+    setStatus(err.message + ' — please try again.', true);
     if (!reset) $('more').hidden = false;
   } finally {
-    loading = false;
+    if (ctl === my) loading = false;
   }
 }
 
 function start() {
   query = $('q').value.trim();
   if (!query) return;
-  items = []; seen = new Set(); page = 0;
+  ctl?.abort(); loading = false; done = false;
+  seen = new Set(); page = 0;
+  History.add(query); renderHistory();
   history.replaceState(null, '', `?q=${encodeURIComponent(query)}`);
-  document.title = `${query} – Image Search`;
+  document.title = `${query} · Lemon Lens`;
   load(true);
 }
 
-$('form').addEventListener('submit', (e) => { e.preventDefault(); start(); });
-for (const id of ['imgsz', 'image_type', 'image_color', 'safe']) $(id).addEventListener('change', () => $('q').value.trim() && start());
-$('more').addEventListener('click', () => { page++; load(false); });
-
-// Lightbox
-function show(n) {
-  if (n < 0 || n >= items.length) return;
-  cur = n;
-  const i = items[n];
-  const img = $('lbimg');
-  img.onerror = () => { img.onerror = null; img.src = i.thumbnail; };
-  img.referrerPolicy = 'no-referrer';
-  img.src = i.original;
-  img.alt = i.title || '';
-  $('lbmeta').innerHTML = `${esc(i.title)}<br>${i.original_width}×${i.original_height} · <a href="${esc(i.link)}" target="_blank" rel="noopener">${esc(i.source)}</a> · <a href="${esc(i.original)}" target="_blank" rel="noopener">Open original</a> · <a href="#" id="cpimg">Copy image URL</a>`;
-  $('cpimg').onclick = (e) => { e.preventDefault(); copyText(i.original, 'Image URL copied'); };
-  $('lb').classList.add('open');
+function showSaved() {
+  const f = Favs.list();
+  $('related').innerHTML = ''; $('more').hidden = true;
+  gal.set(f);
+  setStatus(f.length ? `${f.length} saved image${f.length > 1 ? 's' : ''}` : '');
+  if (!f.length) $('gallery').innerHTML = '<div class="empty"><b>Nothing saved yet</b>Tap the heart on any image to keep it here.</div>';
 }
-const closeLb = () => { $('lb').classList.remove('open'); $('lbimg').src = ''; cur = -1; };
-$('gallery').addEventListener('click', (e) => {
-  const a = e.target.closest('a[data-n]');
-  if (a) { e.preventDefault(); show(Number(a.dataset.n)); }
+function setTab(t) {
+  tab = t;
+  document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.t === t));
+  if (t === 'saved') showSaved(); else if (query && !gal.items.length) start();
+}
+$('tabs').addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.t === 'search') { tab = 'search'; document.querySelectorAll('#tabs button').forEach((x) => x.classList.toggle('on', x === b)); done = false; seen = new Set(); page = 0; query ? (loading = false, start()) : null; }
+  else setTab('saved');
 });
-$('lbx').onclick = closeLb;
-$('lbp').onclick = () => show(cur - 1);
-$('lbn').onclick = () => show(cur + 1);
-$('lb').addEventListener('click', (e) => { if (e.target === $('lb') || e.target.classList.contains('stage')) closeLb(); });
-document.addEventListener('keydown', (e) => {
-  if (cur < 0) return;
-  if (e.key === 'Escape') closeLb();
-  else if (e.key === 'ArrowLeft') show(cur - 1);
-  else if (e.key === 'ArrowRight') show(cur + 1);
-});
+const favCount = () => { const n = Favs.list().length; $('favn').textContent = n ? `(${n})` : ''; };
+document.addEventListener('favs-changed', favCount); favCount();
 
+$('form').addEventListener('submit', (e) => { e.preventDefault(); tab = 'search'; document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.t === 'search')); start(); });
+for (const id of ['imgsz', 'image_type', 'image_color', 'safe']) $(id).addEventListener('change', () => { if (tab === 'search' && $('q').value.trim()) start(); });
+$('more').addEventListener('click', () => { page++; load(false); });
+new IntersectionObserver((es) => { if (es[0].isIntersecting && tab === 'search' && !loading && !done && gal.items.length && !$('more').hidden) { page++; load(false); } }, { rootMargin: '700px' }).observe($('sentinel'));
+
+renderHistory();
 const initial = new URLSearchParams(location.search).get('q');
-if (initial) { $('q').value = initial; start(); } else { $('q').value = 'Sunset'; start(); }
+$('q').value = initial || 'Sunset beach';
+start();

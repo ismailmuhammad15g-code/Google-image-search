@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Playground · Lemon Lens</title>
+<meta name="description" content="Free, unlimited Google Images style search API returning clean JSON.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="sheet">
+<main>
+  <section class="phero"><div class="wrap">
+    <div class="eyebrow">Developers</div>
+    <h1>Image Search API</h1>
+    <p>Scrape results from image search as clean JSON. No key, no signup, no limits.</p>
+    <div class="badges" style="margin:0">
+      <span class="badge"><span>Free</span><span>Unlimited</span></span>
+      <span class="badge"><span>API status</span><span id="up">checking…</span></span>
+    </div>
+  </div></section>
+  <div class="wrap pg">
+    <p>The API endpoint is</p>
+    <code class="endpoint" id="endpoint"></code>
+    <p>Use the live playground below, or read the <a href="/guide">Developer Guide</a>.</p>
+    <section id="playground" class="card">
+      <form id="form" autocomplete="off">
+        <label><span class="tag">q</span>Search query
+          <input id="q" name="q" value="Angry" required maxlength="500"></label>
+        <label><span class="tag">location</span>Location
+          <select id="location"></select></label>
+        <details class="more"><summary>More parameters</summary>
+          <div class="grid3">
+            <label>Page (ijn)<input id="ijn" type="number" min="0" max="50" value="0"></label>
+            <label>Safe search<select id="safe"><option value="">moderate (default)</option><option>active</option><option>off</option></select></label>
+            <label>Size<select id="imgsz"><option value="">any</option><option value="l">large</option><option value="m">medium</option><option value="i">icon</option></select></label>
+            <label>Type<select id="image_type"><option value="">any</option><option>photo</option><option>clipart</option><option>lineart</option><option>animated</option><option>face</option></select></label>
+            <label>Color<select id="image_color"><option value="">any</option><option>color</option><option>gray</option></select></label>
+          </div>
+        </details>
+        <div class="center"><button id="go" class="btn" type="submit">Search</button></div>
+      </form>
+      <div id="status" role="status" style="margin-top:14px"></div>
+      <div class="split">
+        <div id="grid" class="masonry" aria-live="polite"></div>
+        <div class="jsonwrap">
+          <div class="jsonbar"><span>images_results</span><span><button type="button" id="copyUrl">Copy URL</button><button type="button" id="copyCurl">Copy cURL</button><button type="button" id="copyJson">Copy JSON</button></span></div>
+          <pre id="json">Run a search to see the response.</pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+<script src="/vendor/lottie.min.js"></script>
+<script src="/common.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
